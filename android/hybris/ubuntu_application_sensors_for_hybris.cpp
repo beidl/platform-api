@@ -266,7 +266,7 @@ struct SensorService : public ubuntu::application::sensors::SensorService
     }
 
     SensorService() :
-        sensor_event_queue(android::SensorManager::getInstance().createEventQueue()),
+        sensor_event_queue(android::SensorManager::getInstanceForPackage(android::String16("UbuntuTouchSensorService")).createEventQueue()),
         looper(new android::Looper(false)),
         event_loop(new ubuntu::application::EventLoop(looper))
     {
@@ -277,7 +277,7 @@ struct SensorService : public ubuntu::application::sensors::SensorService
             looper_callback,
             this);
 
-        event_loop->run();
+        event_loop->run("UbuntuTouchSensorEventLoop");
 
     }
 
@@ -294,7 +294,7 @@ ubuntu::application::sensors::Sensor::Ptr ubuntu::application::sensors::SensorSe
     ubuntu::application::sensors::SensorType type)
 {
     const android::Sensor* sensor =
-        android::SensorManager::getInstance().getDefaultSensor(
+        android::SensorManager::getInstanceForPackage(android::String16("UbuntuTouchSensorService")).getDefaultSensor(
             hybris::forward_sensor_type_lut.valueFor(type));
 
     if (sensor == NULL)
